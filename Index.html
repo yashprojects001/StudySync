@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudySync 📚</title>
+  <style>
+    :root{
+      --bg:#0f1220;
+      --card:#171b2f;
+      --card2:#1d2340;
+      --text:#eef2ff;
+      --muted:#a9b1d6;
+      --accent:#7c8cff;
+      --accent2:#4ade80;
+      --danger:#fb7185;
+      --shadow:0 18px 45px rgba(0,0,0,.30);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,Segoe UI,Arial,sans-serif;
+      background:radial-gradient(circle at top, #1a2040 0%, var(--bg) 52%, #090b14 100%);
+      color:var(--text);
+    }
+    header{
+      padding:24px 18px 10px;
+      text-align:center;
+    }
+    h1{margin:0;font-size:2.2rem}
+    .sub{color:var(--muted);margin:8px 0 0}
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:16px;
+      display:grid;
+      gap:16px;
+      grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+    }
+    .card{
+      background:linear-gradient(180deg,var(--card),var(--card2));
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+    .card h2{
+      margin:0 0 14px;
+      font-size:1.1rem;
+      letter-spacing:.3px;
+    }
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    input, textarea, select, button{
+      width:100%;
+      padding:11px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:#0f1324;
+      color:var(--text);
+      outline:none;
+      font-size:.95rem;
+    }
+    textarea{min-height:100px;resize:vertical}
+    button{
+      cursor:pointer;
+      background:linear-gradient(135deg,var(--accent),#9a7cff);
+      border:none;
+      font-weight:700;
+      transition:.2s transform,.2s opacity;
+    }
+    button:hover{transform:translateY(-1px);opacity:.95}
+    .btn2{background:linear-gradient(135deg,var(--accent2),#2dd4bf)}
+    .btn3{background:linear-gradient(135deg,#f59e0b,#fb7185)}
+    .mini{
+      font-size:.88rem;
+      color:var(--muted);
+      margin-top:8px;
+      line-height:1.5;
+    }
+    .pill{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(124,140,255,.16);
+      color:#dbe2ff;
+      font-size:.82rem;
+      margin:4px 6px 0 0;
+    }
+    .stat{
+      background:rgba(255,255,255,.04);
+      padding:12px;
+      border-radius:14px;
+      margin-top:10px;
+    }
+    .stat strong{display:block;font-size:1.3rem}
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .row > *{flex:1}
+    ul{padding-left:18px;margin:10px 0 0}
+    li{margin:7px 0}
+    .list-item{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      background:rgba(255,255,255,.04);
+      padding:10px 12px;
+      border-radius:12px;
+      margin:8px 0;
+    }
+    .list-item span{color:var(--muted);font-size:.88rem}
+    .timer{
+      font-size:3rem;
+      font-weight:800;
+      text-align:center;
+      letter-spacing:2px;
+      margin:8px 0 14px;
+    }
+    .progress{
+      height:12px;
+      background:#0d1020;
+      border-radius:999px;
+      overflow:hidden;
+      margin:10px 0 0;
+      border:1px solid rgba(255,255,255,.07);
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#7c8cff,#4ade80);
+    }
+    .heatmap{
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:6px;
+      margin-top:12px;
+    }
+    .day{
+      aspect-ratio:1/1;
+      border-radius:7px;
+      background:rgba(255,255,255,.06);
+    }
+    .day.active{background:#4ade80}
+    .day.mid{background:#7c8cff}
+    .day.high{background:#c084fc}
+    .smallprint{
+      font-size:.82rem;
+      color:var(--muted);
+      margin-top:10px;
+    }
+    .toggle{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .toggle button{
+      width:auto;
+      padding:9px 12px;
+      border-radius:999px;
+    }
+    .checked{
+      text-decoration:line-through;
+      opacity:.65;
+    }
+    .footer{
+      grid-column:1/-1;
+      text-align:center;
+      color:var(--muted);
+      padding:10px 0 24px;
+      font-size:.9rem;
+    }
+    @media (max-width:700px){
+      .timer{font-size:2.3rem}
+      .grid2,.grid3{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>StudySync 📚</h1>
+    <p class="sub">Student productivity platform for focus, planning, notes, and progress.</p>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <h2>Pomodoro Timer</h2>
+      <div class="timer" id="timer">25:00</div>
+      <div class="row">
+        <button onclick="startTimer()">Start</button>
+        <button class="btn2" onclick="pauseTimer()">Pause</button>
+        <button class="btn3" onclick="resetTimer()">Reset</button>
+      </div>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <p class="mini">Session mode: <span id="mode">Focus</span> • Completed cycles: <span id="cycles">0</span></p>
+    </section>
+
+    <section class="card">
+      <h2>Timetable Planner</h2>
+      <div class="grid2">
+        <input id="day" placeholder="Day (e.g. Monday)" />
+        <input id="subject" placeholder="Subject" />
+      </div>
+      <div style="height:10px"></div>
+      <input id="timeSlot" placeholder="Time slot (e.g. 8:00 AM - 9:00 AM)" />
+      <div style="height:10px"></div>
+      <button onclick="addTimetable()">Add Class</button>
+      <div id="timetableList"></div>
+    </section>
+
+    <section class="card">
+      <h2>Assignment Reminders</h2>
+      <div class="grid2">
+        <input id="task" placeholder="Assignment name" />
+        <input id="due" type="date" />
+      </div>
+      <div style="height:10px"></div>
+      <button onclick="addReminder()">Save Reminder</button>
+      <div id="reminderList"></div>
+    </section>
+
+    <section class="card">
+      <h2>Collaborative Notes</h2>
+      <input id="noteTitle" placeholder="Note title" />
+      <div style="height:10px"></div>
+      <textarea id="noteText" placeholder="Write shared notes here..."></textarea>
+      <div style="height:10px"></div>
+      <button onclick="saveNote()">Save Note</button>
+      <div id="notesList"></div>
+      <p class="smallprint">Stored locally in your browser. Great for quick study notes.</p>
+    </section>
+
+    <section class="card">
+      <h2>Progress Heatmap</h2>
+      <div class="grid3">
+        <div class="stat"><strong id="studyHours">0</strong><span>Study Hours</span></div>
+        <div class="stat"><strong id="tasksDone">0</strong><span>Tasks Done</span></div>
+        <div class="stat"><strong id="streak">0</strong><span>Day Streak</span></div>
+      </div>
+      <div class="heatmap" id="heatmap"></div>
+      <div style="height:10px"></div>
+      <button onclick="logStudy()">Log Today’s Study</button>
+    </section>
+
+    <section class="card">
+      <h2>Focus Music Toggle</h2>
+      <div class="toggle">
+        <button onclick="setFocusMode('lofi')">Lo-fi</button>
+        <button onclick="setFocusMode('rain')">Rain</button>
+        <button onclick="setFocusMode('silent')">Silent</button>
+      </div>
+      <p class="mini" id="musicStatus">Current mode: Silent</p>
+      <p class="smallprint">This is a simple visual focus mode selector.</p>
+    </section>
+
+    <section class="card">
+      <h2>Flashcards</h2>
+      <input id="q" placeholder="Question" />
+      <div style="height:10px"></div>
+      <input id="a" placeholder="Answer" />
+      <div style="height:10px"></div>
+      <button onclick="addFlashcard()">Add Flashcard</button>
+      <div id="flashcards"></div>
+    </section>
+
+    <section class="card">
+      <h2>To-Do Checklist</h2>
+      <input id="todo" placeholder="New task" />
+      <div style="height:10px"></div>
+      <button onclick="addTodo()">Add Task</button>
+      <div id="todoList"></div>
+    </section>
+
+    <section class="card">
+      <h2>Study Goals</h2>
+      <input id="goalText" placeholder="Your goal for today" />
+      <div style="height:10px"></div>
+      <button onclick="setGoal()">Set Goal</button>
+      <p class="stat" id="goalDisplay">No goal set yet.</p>
+    </section>
+
+    <section class="card">
+      <h2>Exam Countdown</h2>
+      <input id="examName" placeholder="Exam name" />
+      <div style="height:10px"></div>
+      <input id="examDate" type="date" />
+      <div style="height:10px"></div>
+      <button onclick="saveExam()">Save Exam</button>
+      <p class="stat" id="examDisplay">No exam saved.</p>
+    </section>
+
+    <section class="card">
+      <h2>Subject Tracker</h2>
+      <input id="subjectName" placeholder="Subject name" />
+      <div style="height:10px"></div>
+      <input id="subjectProgress" type="number" min="0" max="100" placeholder="Progress % (0-100)" />
+      <div style="height:10px"></div>
+      <button onclick="addSubject()">Save Subject Progress</button>
+      <div id="subjectList"></div>
+    </section>
+
+    <section class="card">
+      <h2>Daily Quote</h2>
+      <p class="stat" id="quote">“Small steps every day create big results.”</p>
+      <button onclick="newQuote()">New Quote</button>
+    </section>
+
+    <section class="card">
+      <h2>Distraction Blocker</h2>
+      <button onclick="toggleBlocker()">Enable Focus Block</button>
+      <p class="stat" id="blockStatus">Focus block is OFF</p>
+      <p class="smallprint">Use this as a visual reminder to stay off distractions.</p>
+    </section>
+
+    <div class="footer">StudySync • all-in-one student productivity dashboard</div>
+  </main>
+
+  <script>
+    const store = {
+      timetable: JSON.parse(localStorage.getItem('studysync_timetable') || '[]'),
+      reminders: JSON.parse(localStorage.getItem('studysync_reminders') || '[]'),
+      notes: JSON.parse(localStorage.getItem('studysync_notes') || '[]'),
+      flashcards: JSON.parse(localStorage.getItem('studysync_flashcards') || '[]'),
+      todos: JSON.parse(localStorage.getItem('studysync_todos') || '[]'),
+      subjects: JSON.parse(localStorage.getItem('studysync_subjects') || '[]'),
+      studyHours: Number(localStorage.getItem('studysync_hours') || 0),
+      tasksDone: Number(localStorage.getItem('studysync_done') || 0),
+      streak: Number(localStorage.getItem('studysync_streak') || 0),
+      goal: localStorage.getItem('studysync_goal') || '',
+      exam: JSON.parse(localStorage.getItem('studysync_exam') || 'null'),
+      focus: localStorage.getItem('studysync_focus') || 'silent',
+      blocked: localStorage.getItem('studysync_blocked') === 'true'
+    };
+
+    const quotes = [
+      "Small steps every day create big results.",
+      "Focus on progress, not perfection.",
+      "Discipline beats motivation.",
+      "Study smart, not just hard.",
+      "One task at a time wins the day."
+    ];
+
+    let timerWork = 25 * 60;
+    let timerBreak = 5 * 60;
+    let current = timerWork;
+    let mode = 'focus';
+    let interval = null;
+    let cycles = 0;
+
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function renderTimer(){
+      const min = Math.floor(current / 60);
+      const sec = current % 60;
+      document.getElementById('timer').textContent = `${pad(min)}:${pad(sec)}`;
+      const total = mode === 'focus' ? timerWork : timerBreak;
+      const pct = ((total - current) / total) * 100;
+      document.getElementById('bar').style.width = pct + '%';
+      document.getElementById('mode').textContent = mode === 'focus' ? 'Focus' : 'Break';
+    }
+
+    function tick(){
+      if(current > 0){
+        current--;
+        renderTimer();
+      } else {
+        if(mode === 'focus'){
+          cycles++;
+          store.tasksDone++;
+          localStorage.setItem('studysync_done', store.tasksDone);
+          document.getElementById('cycles').textContent = cycles;
+          mode = 'break';
+          current = timerBreak;
+          alert('Focus session complete. Take a short break!');
+        } else {
+          mode = 'focus';
+          current = timerWork;
+          alert('Break over. Back to work!');
+        }
+        renderStats();
+        renderTimer();
+      }
+    }
+
+    function startTimer(){
+      if(interval) return;
+      interval = setInterval(tick, 1000);
+    }
+    function pauseTimer(){
+      clearInterval(interval);
+      interval = null;
+    }
+    function resetTimer(){
+      pauseTimer();
+      mode = 'focus';
+      current = timerWork;
+      renderTimer();
+    }
+
+    function save() {
+      localStorage.setItem('studysync_timetable', JSON.stringify(store.timetable));
+      localStorage.setItem('studysync_reminders', JSON.stringify(store.reminders));
+      localStorage.setItem('studysync_notes', JSON.stringify(store.notes));
+      localStorage.setItem('studysync_flashcards', JSON.stringify(store.flashcards));
+      localStorage.setItem('studysync_todos', JSON.stringify(store.todos));
+      localStorage.setItem('studysync_subjects', JSON.stringify(store.subjects));
+      localStorage.setItem('studysync_hours', store.studyHours);
+      localStorage.setItem('studysync_done', store.tasksDone);
+      localStorage.setItem('studysync_streak', store.streak);
+      localStorage.setItem('studysync_goal', store.goal);
+      localStorage.setItem('studysync_exam', JSON.stringify(store.exam));
+      localStorage.setItem('studysync_focus', store.focus);
+      localStorage.setItem('studysync_blocked', store.blocked);
+    }
+
+    function renderTimetable(){
+      const box = document.getElementById('timetableList');
+      box.innerHTML = store.timetable.map((x,i)=>`
+        <div class="list-item">
+          <div><b>${x.day}</b> • ${x.subject}<br><span>${x.slot}</span></div>
+          <button onclick="removeItem('timetable',${i})" style="width:auto;padding:8px 10px;">Delete</button>
+        </div>`).join('') || '<p class="mini">No classes added yet.</p>';
+    }
+
+    function renderReminders(){
+      const box = document.getElementById('reminderList');
+      box.innerHTML = store.reminders.map((x,i)=>`
+        <div class="list-item">
+          <div><b>${x.task}</b><br><span>Due: ${x.due}</span></div>
+          <button onclick="removeItem('reminders',${i})" style="width:auto;padding:8px 10px;">Done</button>
+        </div>`).join('') || '<p class="mini">No reminders saved yet.</p>';
+    }
+
+    function renderNotes(){
+      const box = document.getElementById('notesList');
+      box.innerHTML = store.notes.map((x,i)=>`
+        <div class="list-item">
+          <div><b>${x.title}</b><br><span>${x.text}</span></div>
+          <button onclick="removeItem('notes',${i})" style="width:auto;padding:8px 10px;">Delete</button>
+        </div>`).join('') || '<p class="mini">No notes yet.</p>';
+    }
+
+    function renderFlashcards(){
+      const box = document.getElementById('flashcards');
+      box.innerHTML = store.flashcards.map((x,i)=>`
+        <div class="list-item">
+          <div>
+            <b>Q:</b> ${x.q}<br>
+            <span class="answer" style="display:none;"><b>A:</b> ${x.a}</span>
+          </div>
+          <div class="row" style="flex:0 0 auto;gap:6px;">
+            <button onclick="toggleAnswer(this)" style="width:auto;padding:8px 10px;">Show</button>
+            <button onclick="removeItem('flashcards',${i})" style="width:auto;padding:8px 10px;">Delete</button>
+          </div>
+        </div>`).join('') || '<p class="mini">No flashcards yet.</p>';
+    }
+
+    function toggleAnswer(btn){
+      const answer = btn.parentElement.parentElement.querySelector('.answer');
+      const show = answer.style.display === 'none';
+      answer.style.display = show ? 'inline' : 'none';
+      btn.textContent = show ? 'Hide' : 'Show';
+    }
+
+    function renderTodos(){
+      const box = document.getElementById('todoList');
+      box.innerHTML = store.todos.map((x,i)=>`
+        <div class="list-item">
+          <label style="display:flex;gap:10px;align-items:center;width:100%;">
+            <input type="checkbox" ${x.done ? 'checked' : ''} onchange="toggleTodo(${i})" style="width:auto;transform:scale(1.15)">
+            <span class="${x.done ? 'checked' : ''}" style="flex:1;color:var(--text);">${x.text}</span>
+          </label>
+          <button onclick="removeItem('todos',${i})" style="width:auto;padding:8px 10px;">Delete</button>
+        </div>`).join('') || '<p class="mini">Nothing on the list yet.</p>';
+    }
+
+    function renderSubjects(){
+      const box = document.getElementById('subjectList');
+      box.innerHTML = store.subjects.map((x,i)=>`
+        <div class="list-item">
+          <div style="width:100%;">
+            <b>${x.name}</b> • ${x.progress}% complete
+            <div class="progress"><div class="bar" style="width:${x.progress}%"></div></div>
+          </div>
+          <button onclick="removeItem('subjects',${i})" style="width:auto;padding:8px 10px;">Delete</button>
+        </div>`).join('') || '<p class="mini">No subjects tracked yet.</p>';
+    }
+
+    function renderHeatmap(){
+      const box = document.getElementById('heatmap');
+      let html = '';
+      for(let i=0;i<35;i++){
+        const level = i % 5;
+        html += `<div class="day ${level===0?'':level===1?'active':level===2?'mid':'high'}"></div>`;
+      }
+      box.innerHTML = html;
+    }
+
+    function renderStats(){
+      document.getElementById('studyHours').textContent = store.studyHours;
+      document.getElementById('tasksDone').textContent = store.tasksDone;
+      document.getElementById('streak').textContent = store.streak;
+      document.getElementById('goalDisplay').textContent = store.goal || 'No goal set yet.';
+      document.getElementById('cycles').textContent = cycles;
+      if(store.exam){
+        const d = new Date(store.exam.date);
+        const today = new Date();
+        const diff = Math.ceil((d - today) / (1000*60*60*24));
+        document.getElementById('examDisplay').textContent = `${store.exam.name} in ${diff} day(s) on ${store.exam.date}`;
+      }
+      document.getElementById('musicStatus').textContent = 'Current mode: ' + (store.focus === 'silent' ? 'Silent' : store.focus === 'lofi' ? 'Lo-fi' : 'Rain');
+      document.getElementById('blockStatus').textContent = store.blocked ? 'Focus block is ON' : 'Focus block is OFF';
+    }
+
+    function addTimetable(){
+      const day = document.getElementById('day').value.trim();
+      const subject = document.getElementById('subject').value.trim();
+      const slot = document.getElementById('timeSlot').value.trim();
+      if(!day || !subject || !slot) return alert('Please fill all timetable fields.');
+      store.timetable.push({day, subject, slot});
+      save(); renderTimetable();
+      day.value = subject.value = slot.value = '';
+      document.getElementById('day').value='';
+      document.getElementById('subject').value='';
+      document.getElementById('timeSlot').value='';
+    }
+
+    function addReminder(){
+      const task = document.getElementById('task').value.trim();
+      const due = document.getElementById('due').value;
+      if(!task || !due) return alert('Please fill reminder fields.');
+      store.reminders.push({task, due});
+      save(); renderReminders();
+      document.getElementById('task').value = '';
+      document.getElementById('due').value = '';
+    }
+
+    function saveNote(){
+      const title = document.getElementById('noteTitle').value.trim();
+      const text = document.getElementById('noteText').value.trim();
+      if(!title || !text) return alert('Write a title and note.');
+      store.notes.unshift({title, text});
+      save(); renderNotes();
+      document.getElementById('noteTitle').value = '';
+      document.getElementById('noteText').value = '';
+    }
+
+    function addFlashcard(){
+      const q = document.getElementById('q').value.trim();
+      const a = document.getElementById('a').value.trim();
+      if(!q || !a) return alert('Add both question and answer.');
+      store.flashcards.unshift({q, a});
+      save(); renderFlashcards();
+      document.getElementById('q').value = '';
+      document.getElementById('a').value = '';
+    }
+
+    function addTodo(){
+      const text = document.getElementById('todo').value.trim();
+      if(!text) return;
+      store.todos.push({text, done:false});
+      save(); renderTodos();
+      document.getElementById('todo').value = '';
+    }
+
+    function toggleTodo(i){
+      store.todos[i].done = !store.todos[i].done;
+      save(); renderTodos();
+    }
+
+    function setGoal(){
+      store.goal = document.getElementById('goalText').value.trim();
+      save(); renderStats();
+      document.getElementById('goalText').value = '';
+    }
+
+    function saveExam(){
+      const name = document.getElementById('examName').value.trim();
+      const date = document.getElementById('examDate').value;
+      if(!name || !date) return alert('Enter exam name and date.');
+      store.exam = {name, date};
+      save(); renderStats();
+    }
+
+    function addSubject(){
+      const name = document.getElementById('subjectName').value.trim();
+      const progress = Number(document.getElementById('subjectProgress').value);
+      if(!name || progress < 0 || progress > 100) return alert('Enter valid subject and progress.');
+      store.subjects.push({name, progress});
+      save(); renderSubjects();
+      document.getElementById('subjectName').value = '';
+      document.getElementById('subjectProgress').value = '';
+    }
+
+    function logStudy(){
+      store.studyHours++;
+      store.streak++;
+      save(); renderStats();
+      alert('Study logged successfully.');
+    }
+
+    function newQuote(){
+      document.getElementById('quote').textContent = '“' + quotes[Math.floor(Math.random()*quotes.length)] + '”';
+    }
+
+    function setFocusMode(m){
+      store.focus = m;
+      save(); renderStats();
+    }
+
+    function toggleBlocker(){
+      store.blocked = !store.blocked;
+      save(); renderStats();
+    }
+
+    function removeItem(key, index){
+      store[key].splice(index,1);
+      save();
+      renderAll();
+    }
+
+    function renderAll(){
+      renderTimetable();
+      renderReminders();
+      renderNotes();
+      renderFlashcards();
+      renderTodos();
+      renderSubjects();
+      renderHeatmap();
+      renderStats();
+      renderTimer();
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
